@@ -1,7 +1,7 @@
-Role Name
+{{ cookiecutter.company }} {{ cookiecutter.role_name }}
 =========
 
-A brief description of the role goes here.
+{{ cookiecutter.description }}
 
 Requirements
 ------------
@@ -35,4 +35,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+{{ cookiecutter.author }}
