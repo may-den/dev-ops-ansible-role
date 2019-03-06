@@ -25,7 +25,9 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: {{ cookiecutter.role_name }}, x: 42 }
+         - role: {{ cookiecutter.role_name }}
+           vars:
+             x: 42
 
 License
 -------

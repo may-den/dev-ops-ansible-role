@@ -7,7 +7,7 @@ lint:
   name: yamllint
 platforms:
   - name: instance-1
-    image: centos:7
+    image: steveexley/centos6-base
 provisioner:
   name: ansible
   lint:
