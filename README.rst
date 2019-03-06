@@ -34,7 +34,7 @@ Usage
 ::
 
     $ pip install cookiecutter
-    $ cookiecutter gh:ansible/molecule-cookiecutter
+    $ cookiecutter gh:matt-horwood-mayden/molecule-cookiecutter
 
 License
 -------
