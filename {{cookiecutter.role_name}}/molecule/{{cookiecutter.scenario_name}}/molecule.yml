@@ -6,7 +6,7 @@ driver:
 lint:
   name: yamllint
 platforms:
-  - name: instance-1
+  - name: {{cookiecutter.role_name}}
     image: steveexley/centos6-base
 provisioner:
   name: ansible
