@@ -15,7 +15,7 @@ Usage
 ::
 
     $ pip install cookiecutter
-    $ cookiecutter gh:matt-horwood-mayden/ansible-molecule-role
+    $ cookiecutter gh:may-den/ansible-molecule-role
 
 License
 -------
