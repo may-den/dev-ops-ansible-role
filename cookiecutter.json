@@ -1,7 +1,7 @@
 {
     "role_name": "role_name",
     "scenario_name": "default",
-    "author": "Matthew Horwood [matt.horwood@mayden.co.uk]",
+    "author": "Your Name [your.name@mayden.co.uk]",
     "description": "your description",
     "company": "Mayden",
     "license": ["BSD", "MIT", "GPLv2", "GPLv3", "Apache", "CC-BY"],
