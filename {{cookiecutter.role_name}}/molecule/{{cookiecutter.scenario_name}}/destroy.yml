@@ -1,18 +1,24 @@
 ---
-{% raw -%}
-- name: Teardown
+- name: Destroy
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: false
-  vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+  no_log: "{{ molecule_no_log }}"
   tasks:
-    - name: Destroy molecule instance(s)
-      docker_container:
-        name: "{{ item.name }}"
-        state: absent
-        force_kill: "{{ item.force_kill | default(True) }}"
-      with_items: "{{ molecule_yml.platforms }}"
-{%- endraw %}
+    # Developer must implement.
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config
+      set_fact:
+        instance_conf: {}
+
+    - name: Dump instance config
+      copy:
+        content: |
+          # Molecule managed
+
+          {{ instance_conf | to_json | from_json | to_yaml }}
+        dest: "{{ molecule_instance_config }}"
+        mode: 0600
+      when: server.changed | default(false) | bool
