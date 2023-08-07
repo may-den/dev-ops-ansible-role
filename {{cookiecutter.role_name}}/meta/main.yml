@@ -3,6 +3,8 @@ galaxy_info:
   author: {{ cookiecutter.author }}
   description: {{ cookiecutter.description }}
   company: {{ cookiecutter.company }}
+  role_name: {{ cookiecutter.role_name | replace("-", "_") }}
+  namespace: {{ cookiecutter.company | lower() }}
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -26,10 +28,10 @@ galaxy_info:
   #
   # platforms is a list of platforms, and each platform has a name and a list of versions.
   #
-  platforms:
-    - name: CentOS
-      versions:
-        - all
+  # platforms:
+  #   - name: CentOS
+  #     versions:
+  #       - all
 
   galaxy_tags: []
   # List tags for your role here, one per line. A tag is a keyword that describes

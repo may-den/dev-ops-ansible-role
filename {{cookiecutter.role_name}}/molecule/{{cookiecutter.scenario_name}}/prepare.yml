@@ -2,4 +2,11 @@
 - name: Prepare
   hosts: all
   gather_facts: false
-  tasks: []
+  become: true
+  tasks:
+    - name: Make sure python3 is installed
+      package:
+        name: python3
+        state: present
+    - name: get EPEL on AWS Linux
+      command: amazon-linux-extras install epel -y

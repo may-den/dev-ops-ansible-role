@@ -1,20 +1,16 @@
 ---
 dependency:
-  name: gilt
+  name: galaxy
 driver:
-  name: docker
-lint:
-  name: yamllint
+  name: ec2
 platforms:
   - name: {{cookiecutter.role_name}}
-    image: mayden/centos7-base
+    image: ami-0f3497daebf127026
+    instance_type: t3.large
+    vpc_subnet_id: subnet-0a0c114d5a46ba1a6
+    tags:
+      Name: {{cookiecutter.role_name}}
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
-scenario:
-  name: {{ cookiecutter.scenario_name }}
 verifier:
-  name: testinfra
-  lint:
-    name: flake8
+  name: ansible
