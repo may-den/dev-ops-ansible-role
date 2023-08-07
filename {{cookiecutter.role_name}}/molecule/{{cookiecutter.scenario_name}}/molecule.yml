@@ -2,28 +2,15 @@
 dependency:
   name: galaxy
 driver:
-  name: docker
+  name: ec2
 platforms:
   - name: {{cookiecutter.role_name}}
-    image: mayden/centos7-base
-    pre_build_image: false
+    image: ami-0f3497daebf127026
+    instance_type: t3.large
+    vpc_subnet_id: subnet-0a0c114d5a46ba1a6
+    tags:
+      Name: {{cookiecutter.role_name}}
 provisioner:
   name: ansible
-  playbooks:
-    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
-scenario:
-  test_sequence:
-    - lint
-    - destroy
-    - dependency
-    - syntax
-    - create
-    - prepare
-    - converge
-    - idempotence
-    - check
-    - side_effect
-    - verify
-    - destroy
 verifier:
   name: ansible
