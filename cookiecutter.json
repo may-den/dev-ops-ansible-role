@@ -6,4 +6,7 @@
     "company": "Mayden",
     "license": ["BSD", "MIT", "GPLv2", "GPLv3", "Apache", "CC-BY"],
     "min_ansible_version": 6.7
+    "_copy_without_render": [
+      "{{cookiecutter.role_name}}/molecule/{{cookiecutter.scenario_name}}/converge.yml",
+      "{{cookiecutter.role_name}}/molecule/{{cookiecutter.scenario_name}}/destroy.yml"
 }
