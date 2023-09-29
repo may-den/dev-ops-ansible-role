@@ -1,4 +1,3 @@
-{% raw %}
 ---
 - name: Create
   hosts: localhost
@@ -307,4 +306,3 @@
       loop: "{{ instance_configs.results | map(attribute='ansible_facts.instance_config') | list }}"
       loop_control:
         label: "{{ item.instance }}"
-{% endraw %}

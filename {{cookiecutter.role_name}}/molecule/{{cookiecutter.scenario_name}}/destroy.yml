@@ -1,4 +1,3 @@
-{% raw %}
 ---
 - name: Destroy
   hosts: localhost
@@ -138,4 +137,3 @@
         index_var: index
         label: "{{ item.name }}"
       when: item.key_inject_method == "ec2"
-{% endraw %}
