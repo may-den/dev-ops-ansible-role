@@ -9,4 +9,5 @@
     "_copy_without_render": [
       "{{cookiecutter.role_name}}/molecule/{{cookiecutter.scenario_name}}/converge.yml",
       "{{cookiecutter.role_name}}/molecule/{{cookiecutter.scenario_name}}/destroy.yml"
+    ]
 }
