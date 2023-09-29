@@ -7,7 +7,7 @@
     "license": ["BSD", "MIT", "GPLv2", "GPLv3", "Apache", "CC-BY"],
     "min_ansible_version": 6.7,
     "_copy_without_render": [
-      "molecule/{{cookiecutter.scenario_name}}/converge.yml",
-      "molecule/{{cookiecutter.scenario_name}}/destroy.yml"
+      "*/converge.yml",
+      "*/destroy.yml"
     ]
 }
