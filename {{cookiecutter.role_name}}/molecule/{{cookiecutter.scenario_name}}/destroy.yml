@@ -97,7 +97,7 @@
       ec2_instance_info:
         instance_ids: "{{ instance.instance_id }}"
       vars:
-        instance: "{{ ec2_instances_async.results[index].instances[0] }}"
+        instance: "{{ ec2_instances_async.results[0].instances[index] }}"
       loop: "{{ ec2_instances_async.results }}"
       loop_control:
         index_var: index
