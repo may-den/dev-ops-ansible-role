@@ -1,7 +1,7 @@
 ---
 - name: Prepare
   hosts: all
-  gather_facts: false
+  gather_facts: true
   become: true
   tasks:
     - name: Wait for cloud-init to finish
@@ -14,3 +14,4 @@
         state: present
     - name: get EPEL on AWS Linux
       command: amazon-linux-extras install epel -y
+      when: (ansible_distribution == 'Amazon' and ansible_distribution_major_version == '2')
