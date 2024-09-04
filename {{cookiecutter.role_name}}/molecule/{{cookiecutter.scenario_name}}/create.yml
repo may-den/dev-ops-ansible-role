@@ -198,6 +198,35 @@
         label: "{{ item.name }}"
       when: item.security_groups | length == 0
 
+    - name: get my public IP
+      ipify_facts: api_url=http://api.ipify.org
+      connection: local
+
+    - name: Create ephemeral security groups (if needed)
+      ec2_group:
+        profile: "{{ item.aws_profile | default(omit) }}"
+        region: "{{ item.region | default(omit) }}"
+        vpc_id: "{{ item.vpc_id or vpc_subnet.vpc_id }}"
+        name: "{{ item.security_group_name }}"
+        description: "{{ item.security_group_description }}"
+        rules:
+          - proto: tcp
+            from_port: "{{ default_ssh_port }}"
+            to_port: "{{ default_ssh_port }}"
+            cidr_ip: "{{ ipify_public_ip }}/32"
+          - proto: icmp
+            from_port: 8
+            to_port: -1
+            cidr_ip: "{{ ipify_public_ip }}/32"
+        rules_egress: "{{ item.security_group_rules_egress }}"
+      vars:
+        vpc_subnet: "{{ subnet_info.results[index].subnets[0] }}"
+      loop: "{{ platforms }}"
+      loop_control:
+        index_var: index
+        label: "{{ item.name }}"
+      when: item.security_groups | length == 0
+
     - name: Create ephemeral EC2 instance(s)
       ec2_instance:
         profile: "{{ item.aws_profile | default(omit) }}"
