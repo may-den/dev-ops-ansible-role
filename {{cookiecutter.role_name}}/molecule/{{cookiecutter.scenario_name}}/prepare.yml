@@ -15,3 +15,11 @@
     - name: get EPEL on AWS Linux
       command: amazon-linux-extras install epel -y
       when: (ansible_distribution == 'Amazon' and ansible_distribution_major_version == '2')
+    - name: Insert shutdown cron file in /etc/cron.d
+      ansible.builtin.cron:
+      name: "Shutdown test instance after hours"
+      hour: "22"
+      minute: "30"
+      job: "shutdown -h now"
+      user: root
+      cron_file: shutdown
