@@ -20,6 +20,6 @@
       name: "Shutdown test instance after hours"
       hour: "22"
       minute: "30"
-      job: "shutdown -h now"
+      job: "/usr/sbin/shutdown -h now"
       user: root
       cron_file: shutdown
