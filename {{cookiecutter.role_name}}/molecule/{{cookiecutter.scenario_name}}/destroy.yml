@@ -42,7 +42,7 @@
            | list }}
 
     # Stored instance config
-    instance_config: "{{ (lookup('file', molecule_instance_config, errors='ignore') or '{}') | from_yaml }}"
+    instance_config: "{{ (lookup('file', molecule_instance_config, errors='ignore') or '[]') | from_yaml }}"
   pre_tasks:
     - name: Validate platform configurations
       assert:
@@ -86,18 +86,19 @@
       ec2_instance:
         profile: "{{ item.aws_profile | default(omit) }}"
         region: "{{ item.region | default(omit) }}"
-        instance_ids: "{{ instance_config | map(attribute='instance_ids') | flatten }}"
+        instance_ids: "{{ item.instance_ids }}"
         state: absent
-      loop: "{{ platforms }}"
+      when: item is defined
+      loop: "{{ instance_config }}"
       loop_control:
-        label: "{{ item.name }}"
+        label: "{{ item.instance }}"
       register: ec2_instances_async
 
     - name: you dead yet
       ec2_instance_info:
         instance_ids: "{{ instance.instance_id }}"
       vars:
-        instance: "{{ ec2_instances_async.results[0].instances[index] }}"
+        instance: "{{ ec2_instances_async.results[index].instances[0] }}"
       loop: "{{ ec2_instances_async.results }}"
       loop_control:
         index_var: index
@@ -109,7 +110,7 @@
     - name: Write Molecule instance configs
       copy:
         dest: "{{ molecule_instance_config }}"
-        content: "{{ {} | to_yaml }}"
+        content: "{{ [] | to_yaml }}"
 
     - name: Destroy ephemeral security groups (if needed)
       ec2_group:
