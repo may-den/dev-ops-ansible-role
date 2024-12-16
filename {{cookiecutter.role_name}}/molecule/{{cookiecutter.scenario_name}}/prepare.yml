@@ -9,17 +9,22 @@
         path: /var/lib/cloud/instance/boot-finished
         state: present
     - name: Make sure python3 is installed
-      package:
+      ansible.builtin.package:
         name: python3
         state: present
     - name: get EPEL on AWS Linux
-      command: amazon-linux-extras install epel -y
+      ansible.builtin.command: amazon-linux-extras install epel -y
       when: (ansible_distribution == 'Amazon' and ansible_distribution_major_version == '2')
+    - name: Install cronie on AL2023 instances
+      ansible.builtin.package:
+        name: cronie
+        state: present
+      when: (ansible_distribution == 'Amazon' and ansible_distribution_major_version == '2023')
     - name: Insert shutdown cron file in /etc/cron.d
       ansible.builtin.cron:
-      name: "Shutdown test instance after hours"
-      hour: "22"
-      minute: "30"
-      job: "/usr/sbin/shutdown -h now"
-      user: root
-      cron_file: shutdown
+        name: "Shutdown test instance after hours"
+        hour: "22"
+        minute: "30"
+        job: "/usr/sbin/shutdown -h now"
+        user: root
+        cron_file: shutdown
