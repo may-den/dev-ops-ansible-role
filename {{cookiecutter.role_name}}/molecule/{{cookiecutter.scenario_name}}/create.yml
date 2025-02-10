@@ -4,9 +4,6 @@
   connection: local
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
-  collections:
-    - community.aws
-    - community.crypto
   vars:
     # Run config handling
     default_run_id: "{{ lookup('password', '/dev/null chars=ascii_lowercase length=5') }}"
@@ -84,7 +81,7 @@
            | list }}
   pre_tasks:
     - name: Validate platform configurations
-      assert:
+      ansible.builtin.assert:
         that:
           - platforms | length > 0
           - platform.name is string and platform.name | length > 0
@@ -119,12 +116,13 @@
         label: "{{ platform.name }}"
   tasks:
     - name: Write run config to file
-      copy:
+      ansible.builtin.copy:
         dest: "{{ run_config_path }}"
         content: "{{ run_config | to_yaml }}"
+        mode: "0640"
 
     - name: Generate local key pairs
-      openssh_keypair:
+      community.crypto.openssh_keypair:
         path: "{{ item.private_key_path }}"
         type: rsa
         size: 2048
@@ -135,7 +133,7 @@
       register: local_keypairs
 
     - name: Look up EC2 AMI(s) by owner and name (if image not set)
-      ec2_ami_info:
+      amazon.aws.ec2_ami_info:
         owners: "{{ item.image_owner }}"
         filters:
           name: "{{ item.image_name }}"
@@ -146,7 +144,7 @@
       register: ami_info
 
     - name: Look up subnets to determine VPCs (if needed)
-      ec2_vpc_subnet_info:
+      amazon.aws.ec2_vpc_subnet_info:
         subnet_ids: "{{ item.vpc_subnet_id }}"
       loop: "{{ platforms }}"
       loop_control:
@@ -155,7 +153,7 @@
       register: subnet_info
 
     - name: Validate discovered information
-      assert:
+      ansible.builtin.assert:
         that:
           - platform.image or (ami_info.results[index].images | length > 0)
           - platform.vpc_id or (subnet_info.results[index].subnets | length > 0)
@@ -167,7 +165,7 @@
         label: "{{ platform.name }}"
 
     - name: Create ephemeral EC2 keys (if needed)
-      ec2_key:
+      amazon.aws.ec2_key:
         profile: "{{ item.aws_profile | default(omit) }}"
         region: "{{ item.region | default(omit) }}"
         name: "{{ item.key_name }}"
@@ -181,19 +179,21 @@
       when: item.key_inject_method == "ec2"
       register: ec2_keys
 
-    - name: get my public IP
-      ipify_facts: api_url=http://api.ipify.org
+    - name: Get my public IP
+      community.general.ipify_facts:
+        api_url: http://api.ipify.org
       connection: local
 
     - name: "Get AWS EC2_INSTANCE_CONNECT IPs"
       ansible.builtin.shell: >
-        curl -sq https://ip-ranges.amazonaws.com/ip-ranges.json |
+        set -o pipefail && curl -sq https://ip-ranges.amazonaws.com/ip-ranges.json |
         jq -r '.prefixes[] | select(.region=="eu-west-2") |
         select(.service=="EC2_INSTANCE_CONNECT") | .ip_prefix'
+      changed_when: false
       register: ec2_instance_connect
 
     - name: Create ephemeral security groups (if needed)
-      ec2_group:
+      amazon.aws.ec2_security_group:
         profile: "{{ item.aws_profile | default(omit) }}"
         region: "{{ item.region | default(omit) }}"
         vpc_id: "{{ item.vpc_id or vpc_subnet.vpc_id }}"
@@ -222,7 +222,7 @@
       when: item.security_groups | length == 0
 
     - name: Create ephemeral EC2 instance(s)
-      ec2_instance:
+      amazon.aws.ec2_instance:
         profile: "{{ item.aws_profile | default(omit) }}"
         region: "{{ item.region | default(omit) }}"
         filters: "{{ platform_filters }}"
@@ -266,8 +266,8 @@
         label: "{{ item.name }}"
       register: ec2_instances
 
-    - name: you got an IP yet
-      ec2_instance_info:
+    - name: You got an IP yet?
+      amazon.aws.ec2_instance_info:
         instance_ids: "{{ instance.instance_id }}"
       vars:
         instance: "{{ ec2_instances.results[index].instances[0] }}"
@@ -277,8 +277,8 @@
         label: "{{ platforms[index].name }}"
       register: ec2_instance_info
 
-    - name: is your address full
-      ec2_instance_info:
+    - name: Is your address full?
+      amazon.aws.ec2_instance_info:
         instance_ids: "{{ instance.instance_id }}"
       vars:
         instance: "{{ ec2_instance_info.results[index].instances[0] }}"
@@ -292,7 +292,7 @@
       register: ec2_dns_name
 
     - name: Collect instance configs
-      set_fact:
+      ansible.builtin.set_fact:
         instance_config:
           instance: "{{ item.name }}"
           address: "{{ item.assign_public_ip | ternary(instance.public_ip_address, instance.private_ip_address) }}"
@@ -310,7 +310,7 @@
       register: instance_configs
 
     - name: Write Molecule instance configs
-      copy:
+      ansible.builtin.copy:
         dest: "{{ molecule_instance_config }}"
         content: >-
           {{ instance_configs.results
@@ -319,9 +319,10 @@
                | to_json
                | from_json
                | to_yaml }}
+        mode: "0640"
 
     - name: Start SSH pollers
-      wait_for:
+      ansible.builtin.wait_for:
         host: "{{ item.address }}"
         port: "{{ item.port }}"
         search_regex: SSH
