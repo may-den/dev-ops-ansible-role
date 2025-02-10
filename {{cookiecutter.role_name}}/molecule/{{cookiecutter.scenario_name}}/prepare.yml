@@ -16,6 +16,11 @@
       ansible.builtin.command:
         cmd: amazon-linux-extras install epel -y # noqa: no-changed-when
       when: (ansible_distribution == 'Amazon' and ansible_distribution_major_version == '2')
+    - name: Install cronie on AL2023 instances
+      ansible.builtin.package:
+        name: cronie
+        state: present
+      when: (ansible_distribution == 'Amazon' and ansible_distribution_major_version == '2023')
     - name: Insert shutdown cron file in /etc/cron.d
       ansible.builtin.cron:
         name: "Shutdown test instance after hours"
