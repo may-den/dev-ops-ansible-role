@@ -230,8 +230,8 @@
         image_id: "{{ platform_image_id }}"
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         security_groups: "{{ platform_security_groups }}"
-        network:
-          assign_public_ip: "{{ item.assign_public_ip }}"
+        network_interfaces:
+          - assign_public_ip: "{{ item.assign_public_ip }}"
         volumes: "{{ item.volumes }}"
         key_name: "{{ (item.key_inject_method == 'ec2') | ternary(item.key_name, omit) }}"
         tags: "{{ platform_tags }}"
