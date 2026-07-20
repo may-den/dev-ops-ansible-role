@@ -18,5 +18,9 @@ platforms:
       Name: "{{ cookiecutter.role_name }}-arm"
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      vault_password_file: "/Users/${USER}/.vault"
+      vault_password_file: "${HOME}/.vault"
 verifier:
   name: ansible
