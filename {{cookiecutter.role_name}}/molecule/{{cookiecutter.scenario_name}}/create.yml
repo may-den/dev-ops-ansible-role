@@ -181,7 +181,8 @@
 
     - name: Get my public IP
       community.general.ipify_facts:
-        api_url: http://api.ipify.org
+        api_url: https://api.ipify.org
+        validate_certs: false
       connection: local
 
     - name: "Get AWS EC2_INSTANCE_CONNECT IPs"
@@ -189,6 +190,8 @@
         set -o pipefail && curl -sq https://ip-ranges.amazonaws.com/ip-ranges.json |
         jq -r '.prefixes[] | select(.region=="eu-west-2") |
         select(.service=="EC2_INSTANCE_CONNECT") | .ip_prefix'
+      args:
+        executable: /bin/bash
       changed_when: false
       register: ec2_instance_connect
 
