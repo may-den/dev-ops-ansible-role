@@ -181,7 +181,7 @@
 
     - name: Get my public IP
       community.general.ipify_facts:
-        api_url: http://api.ipify.org
+        api_url: https://api.ipify.org
         validate_certs: false
       connection: local
 
