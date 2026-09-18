@@ -29,3 +29,8 @@
         job: "/usr/sbin/shutdown -h now"
         user: root
         cron_file: shutdown
+    - name: Enable crond
+      ansible.builtin.systemd_service:
+        name: crond
+        state: started
+        enabled: true
